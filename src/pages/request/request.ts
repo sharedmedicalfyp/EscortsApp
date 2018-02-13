@@ -154,7 +154,7 @@ export class RequestPage {
           console.log(EDSEPD);
           console.log(schedules);
 
-          console.log(startTime);
+          console.log(endTime);
           this.items = this.items.map(item => {
             return item.filter(items =>
               ((new Date(items.Date + " " + items.startTime)) <
@@ -183,10 +183,10 @@ export class RequestPage {
                     this.items = this.items.map(item => {
                       return item.filter(items =>
                         ((new Date(items.Date + " " + items.startTime)) <
-                          startTime && (new Date(items.Date + " " + items.endTime)) <
+                          startTime && (new Date(items.Date + " " + items.endTime)) <=
                           startTime)
                         ||
-                        ((new Date(items.Date + " " + items.startTime)) >
+                        ((new Date(items.Date + " " + items.startTime)) >=
                           endTime)
                       )
                     })
@@ -202,7 +202,7 @@ export class RequestPage {
                           endTime) ||
                         ((new Date(items.Date + " " + items.startTime)) >=
                           startTime
-                          && (new Date(items.Date + " " + items.startTime)) <
+                          && (new Date(items.Date + " " + items.startTime)) <=
                           endTime && items.Carpool === 'Yes'
                           &&
                           items.PickupRegion === pickup
