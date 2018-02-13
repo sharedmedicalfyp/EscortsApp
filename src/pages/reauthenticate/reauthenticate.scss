@@ -21,7 +21,8 @@ margin: auto;
   .but{
   margin:auto;
   display:block;
-   background-color: red;
+background-color: red;
+
 }
  ion-icon {
         font-size: 40px; //Preferred size here
@@ -58,10 +59,6 @@ margin: auto;
     -webkit-box-sizing: border-box;
   
   }
-  #addStepWrapper{
-  overflow:hidden !important;
-}
-[ion-fixed] { height: 100%; width: 100%; }
    .modal_header {
   
   
@@ -79,9 +76,6 @@ margin: auto;
 
 
   
-  }
-  .ro{
-    position: fixed;
   }
   .theroot {
   height: 100px;

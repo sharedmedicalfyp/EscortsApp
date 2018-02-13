@@ -15,7 +15,7 @@ export class ReauthenticatePage {
   password;
   public key;
   appData;
-  constructor(public navCtrl: NavController,  public navParams: NavParams, public view: ViewController, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public view: ViewController, public alertCtrl: AlertController) {
   }
 
   public itemRef: firebase.database.Reference = firebase.database().ref('Escorts');
@@ -70,12 +70,9 @@ export class ReauthenticatePage {
                 cssClass: 'buttonOkCss',
 
                 handler: data => {
-                  this.navCtrl.push(HomePage);
-                  this.navCtrl.setRoot(HomePage)
-                    .then(() => {
-                      this.navCtrl.popToRoot();
-
-                    });
+                  setTimeout(function () {
+                    window.location.reload();
+                  }, 500);
 
                 }
               }
