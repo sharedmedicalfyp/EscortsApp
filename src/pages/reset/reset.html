@@ -15,11 +15,13 @@
 
 <ion-content padding>
   <ion-list>
+     <form [formGroup]="myForm">
     <ion-item class="row">
       <ion-label color="primary">Email: </ion-label>
-      <ion-input type="email" [(ngModel)]="email" placeholder="Text Input" text-wrap></ion-input>
+      <ion-input type="email" formControlName="email" placeholder="Text Input" text-wrap></ion-input>
     </ion-item>
-      <button ion-button class="but" text-center (click)="resetPassword(email)"  [disabled]="!email ">Reset Password
+      <button ion-button class="but" text-center (click)="resetPassword()"  [disabled]="!myForm.valid">Reset Password
 </button>
+     </form>
   </ion-list>
 </ion-content>
