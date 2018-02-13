@@ -32,7 +32,7 @@ export class HistoryPage {
 
     }
 
-    else if (!alerted) {
+    else {
       this.history = "completed";
     }
 

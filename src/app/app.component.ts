@@ -136,6 +136,7 @@ export class MyApp {
     this.activePage = this.pages[1];
 
     window.sessionStorage.clear();
+    window.localStorage.clear();
 
 
     console.log(window.sessionStorage.getItem('Email'));
