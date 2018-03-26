@@ -1,21 +1,35 @@
 <ion-header>
     <ion-navbar color="danger">
+        <ion-title>Schedule</ion-title>
         <button persistent="true" ion-button class="damn" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-        <ion-title style="text-align: center;">{{ viewTitle }}</ion-title>
         <ion-buttons end>
             <button ion-button [disabled]="isToday" (click)="today()">Today</button>
             <button ion-button (click)="changeMode('month')">M</button>
             <button ion-button (click)="changeMode('week')">W</button>
             <button ion-button (click)="changeMode('day')">D</button>
-
         </ion-buttons>
     </ion-navbar>
+    <ion-toolbar color="danger">
+        <ion-title>{{ viewTitle }}</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content class="has-header">
-    <calendar [eventSource]="eventSource" [markDisabled]="markDisabled" [calendarMode]="calendar.mode" [currentDate]="calendar.currentDate" (onCurrentDateChanged)="onCurrentDateChanged($event)" (onEventSelected)="onEventSelected($event)" (onTitleChanged)="onViewTitleChanged($event)"
-        (onTimeSelected)="onTimeSelected($event)" step="30">
+    <calendar [monthviewEventDetailTemplate]="template" [eventSource]="eventSource" [markDisabled]="markDisabled" [calendarMode]="calendar.mode" [currentDate]="calendar.currentDate" (onCurrentDateChanged)="onCurrentDateChanged($event)" (onEventSelected)="onEventSelected($event)"
+        (onTitleChanged)="onViewTitleChanged($event)" (onTimeSelected)="onTimeSelected($event)" step="30">
     </calendar>
+
+    <template #template let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
+        <ion-list class="event-detail-container" overflow-scroll="false" has-bouncing="false">
+            <ion-item *ngIf="selectedDate.events.length == 0"><div class="no-events-label">No Events</div></ion-item>
+            <ion-item (click)="onEventSelected(event)" *ngFor="let event of selectedDate.events">
+
+                <h2>Start Time: {{event.startTime | date: 'shortTime'}} End Time: {{event.endTime | date: 'shortTime'}}</h2>
+                <h3>Pick Up: {{event.pickUp}} </h3>
+                <h3>Destination: {{event.destination}}</h3>
+            </ion-item>
+        </ion-list>
+    </template>
 </ion-content>

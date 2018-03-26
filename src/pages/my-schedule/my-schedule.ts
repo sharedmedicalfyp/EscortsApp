@@ -100,6 +100,8 @@ export class MySchedulePage {
                     key: r.key,
                     startTime: startTime,
                     endTime: EndTime,
+                    pickUp: r.Pickup,
+                    destination: r.Destination,
                     allDay: false
                 });
             }
@@ -109,6 +111,8 @@ export class MySchedulePage {
                     key: r.key,
                     startTime: startTime,
                     endTime: EndTime,
+                    pickUp: r.Pickup,
+                    destination: r.Destination,
                     allDay: false
                 });
             }
@@ -118,6 +122,8 @@ export class MySchedulePage {
                     key: r.key,
                     startTime: startTime,
                     endTime: EndTime,
+                    pickUp: r.Pickup,
+                    destination: r.Destination,
                     allDay: false
                 });
             }
