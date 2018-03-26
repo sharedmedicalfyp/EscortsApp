@@ -11,6 +11,7 @@ import { FormControl, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractC
 import { HistoryPage } from '../history/history';
 
 import { Events } from 'ionic-angular';
+import { RidersInfoPage } from '../riders-info/riders-info';
 @IonicPage()
 @Component({
   selector: 'page-singlebook',
@@ -119,6 +120,12 @@ export class SinglebookPage {
     }
 
   }
+  ViewInfo(item:any){
+    console.log(item);
+    this.navCtrl.push(RidersInfoPage, {
+      item: item
+    })
+  }
   Accept() {
     this.startTime = this.getRoundedTime(new Date(this.date + " " + this.startTime));
     this.endTime = this.getRoundedTime(new Date(this.date + " " + this.endTime));
@@ -152,7 +159,6 @@ export class SinglebookPage {
 
                 }
                 else {
-                  console.log('Haaai');
                   if (this.patient2) {
                     this.itemsRef.push({
                       EDSEPD: EDSEPD,

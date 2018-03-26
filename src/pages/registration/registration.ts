@@ -335,9 +335,7 @@ public types = 'password';
             PlateNo: PlateNo,
             IC: IC,
             Gender: Gender,
-
-
-          });
+      });
 
 
         });

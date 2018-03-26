@@ -1,81 +1,81 @@
 .activeHighlight {
-        background-color :lightcoral;
-    }
-      img {
-    
- border-radius:50%;
-     margin: 0 auto;
-width: 200px;
-height: 200px;
-           overflow: hidden; 
-           display:block
-        }
-        .loading-ios,
+    background-color: lightcoral;
+}
+
+.image {
+    border-radius: 50%;
+    margin: 0 auto;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    display: block
+}
+
+.loading-ios,
 .loading-md,
 .loading-wp {
-  .my-loading-class {
- opacity: 0;
-
-  }
+    .my-loading-class {
+        opacity: 0;
+    }
 }
+
 .buttonCss {
- 
-text-align: center;
-  button.alert-button{
-
-  width: 50%;
-  margin: 5px 0% 5px ;
-  margin-bottom: 10px;
-  border-radius: 3px;
-  outline: 0;
-
-  -moz-outline-style: none;
-  background: #CAD722;
-  border: 1px;
-  color: wheat;
-  font-size: 10px;
-  font-weight: 150;
-  cursor: pointer;
- line-height: 25px;
-  transition: box-shadow .4s ease;
-  display: inline-block;
-
-  }
-   button.alert-button:nth-child(1){
-  padding-right: 50px;
+    text-align: center;
+    button.alert-button {
+        width: 50%;
+        margin: 5px 0% 5px;
+        margin-bottom: 10px;
+        border-radius: 3px;
+        outline: 0;
+        -moz-outline-style: none;
+        background: #CAD722;
+        border: 1px;
+        color: wheat;
+        font-size: 10px;
+        font-weight: 150;
+        cursor: pointer;
+        line-height: 25px;
+        transition: box-shadow .4s ease;
+        display: inline-block;
     }
-      button.alert-button:nth-child(2){
-  padding-right: 30px;
+    button.alert-button:nth-child(1) {
+        padding-right: 50px;
     }
- .buttonOkCss{
-     text-align: center;
- }
- modal-wrapper {
-  position: absolute;
-  width: 70%;
-  height: 70%;
-}
-
-@media not all and (min-height: 600px) and (min-width: 768px) {
-  ion-modal ion-backdrop {
-    visibility: hidden;
-  }
-}
-
-@media only screen and (min-height: 0px) and (min-width: 0px) {
-  .modal-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-}
-.alert-ios .alert-radio-label{ white-space: pre-line;}
-.alert-md .alert-radio-label{ white-space: pre-line;}
-.alert-wp .alert-radio-label{ white-space: pre-line;}
-ion-label{
-white-space:normal !important;
-}
-
+    button.alert-button:nth-child(2) {
+        padding-right: 30px;
+    }
+    .buttonOkCss {
+        text-align: center;
+    }
+    modal-wrapper {
+        position: absolute;
+        width: 70%;
+        height: 70%;
+    }
+    @media not all and (min-height: 600px) and (min-width: 768px) {
+        ion-modal ion-backdrop {
+            visibility: hidden;
+        }
+    }
+    @media only screen and (min-height: 0px) and (min-width: 0px) {
+        .modal-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .alert-ios .alert-radio-label {
+        white-space: pre-line;
+    }
+    .alert-md .alert-radio-label {
+        white-space: pre-line;
+    }
+    .alert-wp .alert-radio-label {
+        white-space: pre-line;
+    }
+    ion-label {
+        white-space: normal !important;
+    }
 }

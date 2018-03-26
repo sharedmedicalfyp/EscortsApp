@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform, LoadingController, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Camera, CameraOptions } from '@ionic-native/camera';
@@ -35,6 +35,8 @@ import { Observable } from 'rxjs/Observable';
 import { Events } from 'ionic-angular';
 import { App } from 'ionic-angular';
 import { TrackerPage } from '../pages/tracker/tracker';
+import { RidersInfoPage } from '../pages/riders-info/riders-info';
+import { BookingRequestsPage } from '../pages/booking-requests/booking-requests';
 
 
 @Component({
@@ -51,7 +53,7 @@ export class MyApp {
   activePage: any;
   @ViewChild(Nav) nav: Nav;
   pages: Array<{ title: string, component: any }>;
-  constructor(platform: Platform, statusBar: StatusBar, public appCtrl: App, private nativeStorage: NativeStorage, public events: Events, private afAuth: AngularFireAuth, splashScreen: SplashScreen, private camera: Camera, public menuCtrl: MenuController) {
+  constructor(platform: Platform, statusBar: StatusBar, public appCtrl: App, private nativeStorage: NativeStorage, public events: Events, private afAuth: AngularFireAuth, splashScreen: SplashScreen, private camera: Camera, public menuCtrl: MenuController, public load: LoadingController, public toast: ToastController) {
     this.events.subscribe('profileUpdated', () => {
       console.log(window.sessionStorage.getItem('uImage'))
       this.imgsource = window.sessionStorage.getItem('uImage');
@@ -82,16 +84,16 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       console.log(this.currentUser);
-      this.afAuth.authState.subscribe(auth => {
-        if (auth)
-          this.rootPage = BookingPage;
-        else
-          console.log(auth);
-        this.rootPage = HomePage;
-      });
+      // this.afAuth.authState.subscribe(auth => {
+      //   if (auth)
+      //     this.rootPage = BookingPage;
+      //   else
+      //     console.log(auth);
+      //   this.rootPage = HomePage;
+      // });
       this.pages = [
         { title: 'Profile', component: ProfilePage },
-        { title: 'Bookings', component: BookingPage },
+        { title: 'Bookings', component: BookingRequestsPage },
         { title: 'Schedule', component: MySchedulePage },
         { title: 'History', component: HistoryPage },
         { title: 'Tracking', component: TrackerPage },
@@ -132,25 +134,27 @@ export class MyApp {
     return page == this.activePage;
   }
   Logout() {
+    let page = {component: HomePage}
+    let loading = this.load.create({
+      content: "Signing Out"
+    });
+    loading.present();
     this.menuCtrl.close();
+    this.menuCtrl.swipeEnable(false);
     this.activePage = this.pages[1];
 
+    //clearing session and local storage
     window.sessionStorage.clear();
     window.localStorage.clear();
 
-
-    console.log(window.sessionStorage.getItem('Email'));
-
-    firebase.auth().signOut().then(function () {
-      // Sign-out successful.
-      setTimeout(function () {
-        window.location.reload();
-      }, 500);
-
-    }, function (error) {
-      // An error happened.
-      console.log(error);
-    });
+    firebase.auth().signOut();
+    this.nav.setRoot(page.component);
+    this.nav.popToRoot();
+    loading.dismiss();
+    this.toast.create({
+      message: "Successfully signed out",
+      duration: 1500,
+    }).present();
   }
 
 }

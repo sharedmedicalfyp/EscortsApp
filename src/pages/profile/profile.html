@@ -1,123 +1,121 @@
 <ion-header>
 
-  <ion-navbar color="danger" enable-menu-with-back-views="false">
+    <ion-navbar color="danger" enable-menu-with-back-views="false">
 
-    <button persistent="true" ion-button class="damn" menuToggle>
+        <button persistent="true" ion-button class="damn" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title style="text-align: center;">Profile</ion-title>
-  </ion-navbar>
+        <ion-title style="text-align: center;">Profile</ion-title>
+    </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <ion-list *ngFor="let item of items ">
+    <ion-list *ngFor="let item of items ">
 
 
 
-    <div class="round">
-      <img [src]="base64Image" (click)="presentActionSheet()">
-    </div>
-    <ion-item>
-      <ion-label color="primary">Name:</ion-label>
-      <ion-label>{{ item.Name}}</ion-label>
+        <div>
+            <img [src]="base64Image" class="image" (click)="presentActionSheet()">
+        </div>
+        <ion-item>
+            <ion-label color="primary" stacked>Name:</ion-label>
+            <ion-label>{{ item.Name}}</ion-label>
 
-    </ion-item>
-
-
-    <ion-item>
-      <ion-label color="primary" text-wrap>Personal Contact:</ion-label>
-      <ion-label>{{ item.Tel}}</ion-label>
-    </ion-item>
-
-    <ion-item>
-      <ion-label color="primary">Gender:</ion-label>
-      <ion-label> {{ item.Gender}}</ion-label>
-    </ion-item>
-
-    <ion-item>
-      <ion-label color="primary">IC:</ion-label>
-      <ion-label> {{ item.IC}}</ion-label>
-    </ion-item>
+        </ion-item>
 
 
+        <ion-item>
+            <ion-label color="primary" text-wrap stacked>Personal Contact:</ion-label>
+            <ion-label>{{ item.Tel}}</ion-label>
+        </ion-item>
 
-    <ion-item>
-      <ion-label color="primary">Address:</ion-label>
-      <ion-label>{{ item.Address}}</ion-label>
-    </ion-item>
+        <ion-item>
+            <ion-label color="primary" stacked>Gender:</ion-label>
+            <ion-label> {{ item.Gender}}</ion-label>
+        </ion-item>
 
-
-    <ion-item>
-      <ion-label color="primary">License Plate:</ion-label>
-      <ion-label>{{ item.PlateNo}}</ion-label>
-    </ion-item>
-
-    <ion-item>
-      <ion-label color="primary" class="date">Date of birth:</ion-label>
-      <ion-datetime disabled [(ngModel)]="myDate" class="ion-datetime-picker"></ion-datetime>
-    </ion-item>
-    <ion-item>
-      <ion-label color="primary">Age:</ion-label>
-      <ion-label> {{ item.Age}}</ion-label>
-    </ion-item>
+        <ion-item>
+            <ion-label color="primary" stacked>IC:</ion-label>
+            <ion-label> {{ item.IC}}</ion-label>
+        </ion-item>
 
 
 
+        <ion-item text-wrap>
+            <h5 style="color:#488aff">Address:</h5>
+            <h2 style="margin-top:15px">{{ item.Address}}</h2>
+        </ion-item>
 
+
+        <ion-item>
+            <ion-label color="primary" stacked>License Plate:</ion-label>
+            <ion-label>{{ item.PlateNo}}</ion-label>
+        </ion-item>
+
+        <ion-item>
+            <ion-label color="primary" class="date" stacked>Date of birth:</ion-label>
+            <ion-datetime disabled [(ngModel)]="myDate" class="ion-datetime-picker"></ion-datetime>
+        </ion-item>
+        <ion-item>
+            <ion-label color="primary" stacked>Age:</ion-label>
+            <ion-label> {{ item.Age}}</ion-label>
+        </ion-item>
 
 
 
 
 
 
-  </ion-list>
 
 
-  <div class="row">
-    <div class="col">
-      <button ion-button class="react" (click)="Update()">Update My Profile
+
+
+    </ion-list>
+
+
+    <div class="row">
+        <div class="col">
+            <button ion-button class="react" (click)="Update()">Update My Profile
      </button>
-    </div>
+        </div>
 
 
-    <!--<div class="col">
+        <!--<div class="col">
       <button ion-button class="react" (click)="Delete()">Delete My Profile
         </button>
     </div>-->
-  </div>
-  <ion-list [formGroup]="myForm" class="margin">
-    <ion-item class="ion-item">
-      <ion-label color="primary" stacked no-lines text-wrap>New Password:</ion-label>
-      <ion-input type="{{type}}" formControlName="password" placeholder="Password Input" (ionChange)="matchingPasswords()" max="25"
-        min="8" [class.invalid]="!myForm.get('password').valid  && (myForm.get('password').dirty || submitAttempt)"></ion-input>
-      <button *ngIf="!showPass" ion-button clear color="dark" type="button" item-right (click)="showPassword()"> <ion-icon name="ios-eye-outline"></ion-icon></button>
-      <button *ngIf="showPass" ion-button clear color="dark" type="button" item-right (click)="showPassword()"> <ion-icon name="ios-eye-off-outline"></ion-icon></button>
+    </div>
+    <ion-list [formGroup]="myForm" class="margin">
+        <ion-item class="ion-item">
+            <ion-label color="primary" stacked no-lines text-wrap>New Password:</ion-label>
+            <ion-input type="{{type}}" formControlName="password" placeholder="Password Input" (ionChange)="matchingPasswords()" max="25" min="8" [class.invalid]="!myForm.get('password').valid  && (myForm.get('password').dirty || submitAttempt)"></ion-input>
+            <button *ngIf="!showPass" ion-button clear color="dark" type="button" item-right (click)="showPassword()"> <ion-icon name="ios-eye-outline"></ion-icon></button>
+            <button *ngIf="showPass" ion-button clear color="dark" type="button" item-right (click)="showPassword()"> <ion-icon name="ios-eye-off-outline"></ion-icon></button>
 
-    </ion-item>
-    <div class="error" *ngIf="myForm.get('password').hasError('required') && myForm.get('password').touched">
-      Password is required
-    </div>
-    <div class="error" *ngIf="myForm.get('password').hasError('minlength') && myForm.get('password').touched">
-      Minimum of 8 characters
-    </div>
-    <div class="error" *ngIf="myForm.get('password').hasError('maxlength') && myForm.get('password').touched">
-      Maximum of 25 characters
-    </div>
-    <ion-item class="ion-item1">
-      <ion-label color="primary" stacked no-lines text-wrap>Confirm Password:</ion-label>
-      <ion-input type="{{types}}" formControlName="rePassword" placeholder="Password Input" max="25" min="8" (ionChange)="matchingPasswords()"
-        [class.invalid]="!myForm.get('rePassword').valid  && (myForm.get('rePassword').dirty  || submitAttempt)"></ion-input>
-      <button *ngIf="!cfmpass" ion-button clear color="dark" type="button" item-right (click)="showsPassword()"> <ion-icon name="ios-eye-outline"></ion-icon></button>
-      <button *ngIf="cfmpass" ion-button clear color="dark" type="button" item-right (click)="showsPassword()"> <ion-icon name="ios-eye-off-outline"></ion-icon></button>
-    </ion-item>
+        </ion-item>
+        <div class="error" *ngIf="myForm.get('password').hasError('required') && myForm.get('password').touched">
+            Password is required
+        </div>
+        <div class="error" *ngIf="myForm.get('password').hasError('minlength') && myForm.get('password').touched">
+            Minimum of 8 characters
+        </div>
+        <div class="error" *ngIf="myForm.get('password').hasError('maxlength') && myForm.get('password').touched">
+            Maximum of 25 characters
+        </div>
+        <ion-item class="ion-item1">
+            <ion-label color="primary" stacked no-lines text-wrap>Confirm Password:</ion-label>
+            <ion-input type="{{types}}" formControlName="rePassword" placeholder="Password Input" max="25" min="8" (ionChange)="matchingPasswords()" [class.invalid]="!myForm.get('rePassword').valid  && (myForm.get('rePassword').dirty  || submitAttempt)"></ion-input>
+            <button *ngIf="!cfmpass" ion-button clear color="dark" type="button" item-right (click)="showsPassword()"> <ion-icon name="ios-eye-outline"></ion-icon></button>
+            <button *ngIf="cfmpass" ion-button clear color="dark" type="button" item-right (click)="showsPassword()"> <ion-icon name="ios-eye-off-outline"></ion-icon></button>
+        </ion-item>
 
-    <div class='form-text error' *ngIf="myForm.get('rePassword').touched && mismatchedPasswords && myForm.get('password').touched">
-      <p>Passwords do not match.</p>
-    </div>
-  </ion-list>
-  <!-- <form [formGroup]="myForm" class="margin">
+        <div class='form-text error' *ngIf="myForm.get('rePassword').touched && mismatchedPasswords && myForm.get('password').touched">
+            <p>Passwords do not match.</p>
+        </div>
+    </ion-list>
+    <!-- <form [formGroup]="myForm" class="margin">
  
  <div class="row">
       <span class = "input-label">New Password:</span>
@@ -138,7 +136,7 @@
   </form>
 -->
 
-  <button ion-button [disabled]=" mismatchedPasswords || !myForm.valid" class="react" (click)="UpdatePassword()">Update My Password
+    <button ion-button [disabled]=" mismatchedPasswords || !myForm.valid" class="react" (click)="UpdatePassword()">Update My Password
 </button>
 
 </ion-content>

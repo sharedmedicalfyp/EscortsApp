@@ -49,6 +49,8 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { Device } from '@ionic-native/device';
 import { NativeGeocoder, NativeGeocoderReverseResult, NativeGeocoderForwardResult } from '@ionic-native/native-geocoder';
 import { TrackerPage } from '../pages/tracker/tracker';
+import { RidersInfoPage } from '../pages/riders-info/riders-info';
+import { BookingRequestsPage } from '../pages/booking-requests/booking-requests';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCFU9g3inPp81yQU14fYANC7vf31SpkqKk",
@@ -81,7 +83,9 @@ export const firebaseConfig = {
     HistoryPage,
     CameraPage,
     CropPage,
-    TrackerPage
+    TrackerPage,
+    RidersInfoPage,
+    BookingRequestsPage
   ],
   imports: [
     BrowserModule,
@@ -131,7 +135,9 @@ export const firebaseConfig = {
     HistoryPage,
     CameraPage,
     CropPage,
-    TrackerPage
+    TrackerPage,
+    RidersInfoPage,
+    BookingRequestsPage
   ],
   providers: [
     StatusBar,

@@ -1,0 +1,20 @@
+page-booking-requests {}
+
+.toolbar-title {
+    text-overflow: inherit;
+    white-space: normal;
+}
+
+.no-events-label {
+    font-weight: bold;
+    color: darkgrey;
+    text-align: center;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.event-detail-container {
+    border-top: 2px darkgrey solid;
+}

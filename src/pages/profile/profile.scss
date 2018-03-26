@@ -1,59 +1,52 @@
 page-profile {
-
-  .label{
-      float: right;
-          width:120px;
-  }
-  
-
-   .react{
-       margin: auto;
-        display:block;
+    .label {
+        float: right;
+        width: 120px;
+    }
+    .react {
+        margin: auto;
+        display: block;
         background-color: red;
-   }
-.margin{
-padding-top: 50px;
-}
-  .item, .item-divider {
-  border-color: red;
-}  
-.ion-item{ 
-		border: 1px solid #c8c7cc;
-		margin-top : 20px;
-}
- ion-icon {
+    }
+    .margin {
+        padding-top: 50px;
+    }
+    .item,
+    .item-divider {
+        border-color: red;
+    }
+    .ion-item {
+        border: 1px solid #c8c7cc;
+        margin-top: 20px;
+    }
+    ion-icon {
         font-size: 40px; //Preferred size here
     }
- .ion-item1{ 
-		border: 1px solid #c8c7cc;
-        
-	}
-  ion-item [disabled] {
-   color: black;
-
-}
-input[disabled] {
-color:#000 !important;
-background: none !important;
-opacity: 1 !important;
-}
-.item-input-disabled ion-label {
-color:#000 !important;
-background: none !important;
-opacity: 1 !important;
-}
-.ion-datetime-picker
-{
-    color:#000 !important;
-background: none !important;
-opacity: 1 !important;
-    padding-right: 95px;
+    .ion-item1 {
+        border: 1px solid #c8c7cc;
     }
-    .date
-{
-    color:#488aff !important;
-background: none !important;
-opacity: 1 !important;
+    ion-item [disabled] {
+        color: black;
     }
-
+    input[disabled] {
+        color: #000 !important;
+        background: none !important;
+        opacity: 1 !important;
+    }
+    .item-input-disabled ion-label {
+        color: #000 !important;
+        background: none !important;
+        opacity: 1 !important;
+    }
+    .ion-datetime-picker {
+        color: #000 !important;
+        background: none !important;
+        opacity: 1 !important;
+        padding-right: 95px;
+    }
+    .date {
+        color: #488aff !important;
+        background: none !important;
+        opacity: 1 !important;
+    }
 }

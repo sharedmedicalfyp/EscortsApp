@@ -1,22 +1,22 @@
-<ion-menu [content]="content">
-  <ion-header>
-    <ion-toolbar color="secondary">
-      <ion-title>Menu</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-menu [content]="content" [swipeEnabled]="false">
+    <ion-header>
+        <ion-toolbar color="secondary">
+            <ion-title>Menu</ion-title>
+        </ion-toolbar>
+    </ion-header>
 
-  <ion-content>
-    <ion-list>
-     <img [src]="imgsource" id="img">
-     <ion-label style="text-align: center;">{{name}}</ion-label>
-      <button menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)" >
+    <ion-content>
+        <ion-list>
+            <img [src]="imgsource" class="image" id="img">
+            <ion-label style="text-align: center;">{{name}}</ion-label>
+            <button menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">
         {{p.title}}
       </button>
-    <ion-item (click)="Logout()">Logout</ion-item>
-    </ion-list> 
-  </ion-content>
+            <ion-item (click)="Logout()">Logout</ion-item>
+        </ion-list>
+    </ion-content>
 
-</ion-menu> 
+</ion-menu>
 
 
 <ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
