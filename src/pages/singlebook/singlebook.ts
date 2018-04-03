@@ -12,6 +12,7 @@ import { HistoryPage } from '../history/history';
 
 import { Events } from 'ionic-angular';
 import { RidersInfoPage } from '../riders-info/riders-info';
+import { MyApp } from '../../app/app.component';
 @IonicPage()
 @Component({
   selector: 'page-singlebook',
@@ -22,6 +23,7 @@ export class SinglebookPage {
   public name;
   isenabled: boolean = true;
   visible: boolean = false;
+  hasOverlap: boolean = false;
   status;
   email;
   keys;
@@ -37,13 +39,15 @@ export class SinglebookPage {
   carpool;
   EndTime;
   patient2;
+  isCancelled: boolean = false;
   cancelledAt;
   completedAt;
   itemsRef: AngularFireList<any>;
   myForm: FormGroup;
   button: boolean;
+  ComApp: MyApp;
   public DSEARef: firebase.database.Reference;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, afDatabase: AngularFireDatabase, public formBuilder: FormBuilder, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, afDatabase: AngularFireDatabase, public formBuilder: FormBuilder, public alertCtrl: AlertController, public eventsCtrl:Events) {
     this.itemsRef = afDatabase.list('EscortBookings');
 
     this.myForm = formBuilder.group({
@@ -67,6 +71,7 @@ export class SinglebookPage {
 
     this.email = window.sessionStorage.getItem('Email');
     this.key = this.navParams.get('key');
+    this.hasOverlap = this.navParams.get('hasOverlap');
     this.status = this.navParams.get('Status');
     if (this.status === 'Pending') {
       this.button = true;
@@ -75,6 +80,9 @@ export class SinglebookPage {
     if (this.status === 'Accepted') {
       this.cancel = true;
       this.visible = true;
+    }
+    if(this.status === 'Cancelled'){
+      this.isCancelled = true;
     }
 
     this.itemRef.child(this.key).once('value', (itemkeySnapshot) => {
@@ -124,7 +132,13 @@ export class SinglebookPage {
     console.log(item);
     this.navCtrl.push(RidersInfoPage, {
       item: item
-    })
+    });
+  }
+  ReviewSchedule(){
+    console.log("Schedule open");
+    this.eventsCtrl.publish('event:resolve', this.date);
+    //this.ComApp.openSchedule(MySchedulePage, this.date);
+    
   }
   Accept() {
     this.startTime = this.getRoundedTime(new Date(this.date + " " + this.startTime));

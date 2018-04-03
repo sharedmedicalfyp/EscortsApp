@@ -20,6 +20,7 @@ export class BookingRequestsPage {
   @ViewChild(CalendarComponent) myCalendar: CalendarComponent;
   constructor(public afDatabase: AngularFireDatabase, public navCtrl: NavController, public navParams: NavParams) {
     this.itemsRef = afDatabase.list('Bookings');
+    
   }
 
   ionViewDidLoad() {
@@ -28,7 +29,6 @@ export class BookingRequestsPage {
   }
 
   public events: any[] = [];
-  
   noEventsLabel = "No Bookings Available";
   eventSource;
   itemsRef: AngularFireList<any>;
@@ -41,6 +41,8 @@ export class BookingRequestsPage {
     loadEvents() {
       this.events = [];
         this.eventSource = this.createRandomEvents();
+        var date = new Date();
+        this.myCalendar.currentDate = date;
     }
     onViewTitleChanged(title) {
         this.viewTitle = title;
@@ -48,7 +50,8 @@ export class BookingRequestsPage {
     onEventSelected(event) {
         this.navCtrl.push(SinglebookPage, {
             key: event.key,
-            Status: 'Pending'
+            Status: 'Pending',
+            hasOverlap: event.hasOverlap
           });
         console.log('Event selected:' + event.startTime + '-' + event.endTime + ',' + event.title);
     }

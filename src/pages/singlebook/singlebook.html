@@ -10,7 +10,79 @@
 <ion-content padding text-wrap>
     <ion-list *ngFor="let item of items ">
         <form [formGroup]="myForm">
+
+
+            <!-- =================Test===================-->
             <ion-item>
+                <p style="color:#488aff">Carpool: </p>
+                <p style="display:inline; color:black">{{item.Carpool}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Assistance: </p>
+                <p style="display:inline; color:black">{{item.Assistance}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Client's Email: </p>
+                <p style="display:inline; color:black">{{item.Email}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Contact: </p>
+                <p style="display:inline; color:black">{{item.Contact}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.SecondaryContact">
+                <p style="color:#488aff">Secondary Contact: </p>
+                <p style="display:inline; color:black">{{item.SecondaryContact}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Date: </p>
+                <p style="display:inline; color:black">{{item.Date}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Start Time: </p>
+                <p style="display:inline; color:black">{{item.startTime}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">End Time: </p>
+                <p style="display:inline; color:black">{{item.endTime}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Pick up Location: </p>
+                <p style="display:inline; color:black">{{item.Pickup}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Requester: </p>
+                <p style="display:inline; color:black">{{item.ClientName}}</p>
+            </ion-item>
+            <ion-item>
+                <p style="color:#488aff">Riders: </p>
+                <p style="display:inline; color:black">{{item.PatientName}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.Patient2Name">
+                <p style="display:inline; color:black">{{item.Patient2Name}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.Patient3Name">
+                <p style="display:inline; color:black">{{item.Patient3Name}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.CompletedAt">
+                <p style="color:#488aff">Completed At: </p>
+                <p style="display:inline; color:black">{{item.CompletedAt | date : 'dd/MM/yyyy h.mma'}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.ROD">
+                <p style="color:#488aff">Reason Of Decline: </p>
+                <p style="display:inline; color:black">{{item.ROD}}</p>
+            </ion-item>
+            <ion-item *ngIf="item.CancelledAt">
+                <p style="color:#488aff">Cancelled At: </p>
+                <p style="display:inline; color:black">{{ item.CancelledAt | date : 'dd/MM/yyyy h.mma' }}</p>
+            </ion-item>
+            <ion-item *ngIf="visible">
+                <ion-label color="primary" stacked>Reasons Of Decline :</ion-label>
+                <ion-input formControlName="Rod" type="text" placeholder="Reasons Of Decline "></ion-input>
+            </ion-item>
+
+            <!--===============End==================-->
+
+            <!-- <ion-item>
                 <ion-label color="primary">Carpool:</ion-label>
                 <ion-label> {{ item.Carpool }}</ion-label>
             </ion-item>
@@ -18,12 +90,6 @@
                 <ion-label color="primary">Assistance:</ion-label>
                 <ion-label> {{ item.Assistance }}</ion-label>
             </ion-item>
-            <!--<ion-list *ngFor="let assist of item.Assistance; let i = index ">
-        <ion-item>
-      <ion-label color="primary" class="enableBottomBorder">Patient{{ i+1 }}:</ion-label>
-      <ion-label> {{ assist }}</ion-label>
-    </ion-item>
-    </ion-list>-->
             <ion-item>
                 <ion-label color="primary">Client's Email:</ion-label>
                 <ion-label> {{ item.Email }}</ion-label>
@@ -91,16 +157,23 @@
             <ion-item *ngIf="visible">
                 <ion-label color="primary">Reasons Of Decline :</ion-label>
                 <ion-input formControlName="Rod" type="text" placeholder="Reasons Of Decline "></ion-input>
-            </ion-item>
-
+            </ion-item> -->
             <ion-row>
-                <button ion-button class="but" style="margin-top:10px" text-center (click)="ViewInfo(item)">View Riders Information</button>
+                <!-- first button  -->
+                <ion-col *ngIf=" !cancel && !isCancelled" col-6>
 
-            </ion-row>
-            <ion-row>
-                <button *ngIf="button" style="margin-top:10px" ion-button class="but" text-center [disabled]="!isenabled" (click)="Accept()"> Accept</button>
-            </ion-row>
+                    <button ion-button class="but" style="margin-top:10px" text-center (click)="ViewInfo(item)">Riders Info</button>
 
+                </ion-col>
+                <!-- second button  -->
+                <ion-col col-6>
+                    <button *ngIf="hasOverlap == true" ion-button class="but" style="margin-top:10px" text-center (click)="ReviewSchedule()">Resolve Conflicts</button>
+                    <button *ngIf="button && hasOverlap == false" style="margin-top:10px" ion-button class="but" text-center [disabled]="!isenabled" (click)="Accept()"> Accept</button>
+                </ion-col>
+            </ion-row>
+            <ion-row *ngIf=" cancel || isCancelled">
+                <button ion-button class="but" style="margin-top:10px" text-center (click)="ViewInfo(item)">Riders Info</button>
+            </ion-row>
             <ion-row *ngIf=" cancel">
                 <ion-col col-6>
 

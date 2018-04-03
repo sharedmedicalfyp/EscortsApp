@@ -1,9 +1,11 @@
 page-singlebook {
-.but{
-  margin:auto;
-  display:block;
-background-color: red;
-
+    .but {
+        margin: auto;
+        display: block;
+        background-color: red;
+    }
 }
 
+ion-label {
+    $item-md-body-text-font-size: 50px;
 }

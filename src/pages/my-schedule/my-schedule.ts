@@ -22,6 +22,7 @@ export class MySchedulePage {
     speakers;
     day = [];
     events = [];
+
     items: Observable<any[]>;
     email = window.sessionStorage.getItem('Email');
     itemsRef: AngularFireList<any>;
@@ -29,6 +30,7 @@ export class MySchedulePage {
 
     constructor(public navCtrl: NavController, public modalCtrl: ModalController, afDatabase: AngularFireDatabase, public navParams: NavParams) {
         this.itemsRef = afDatabase.list('Bookings');
+        
 
 
 
@@ -37,6 +39,17 @@ export class MySchedulePage {
     ionViewDidLoad() {
         console.log('ionViewDidLoad MySchedulePage');
         this.loadEvents();
+        var resolveDate;
+        resolveDate = this.navParams.get('resolveDate');
+        if(resolveDate){
+            //notes 
+           var conflictingDate = new Date();
+            conflictingDate = (new Date(resolveDate + " " + "00:00"));
+            this.myCalendar.currentDate = conflictingDate;
+        }else{
+            var date = new Date();
+            this.myCalendar.currentDate = date;
+        }
     }
     eventSource;
     viewTitle;

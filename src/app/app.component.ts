@@ -79,6 +79,11 @@ export class MyApp {
       this.imgsource = window.sessionStorage.getItem('Pic');
       this.name = window.sessionStorage.getItem('Name');
     });
+    this.events.subscribe('event:resolve',(date)=>{
+      
+      this.openSchedule(this.pages[2], date);
+    
+  });
     platform.ready().then(() => {
 
       statusBar.styleDefault();
@@ -119,6 +124,7 @@ export class MyApp {
   }
 
   openPage(page) {
+
     console.log(page);
     if (page.component) {
       this.nav.setRoot(page.component);
@@ -130,6 +136,17 @@ export class MyApp {
       this.activePage = this.pages[1];
     }
   }
+
+  openSchedule(page, resolveDate) {
+    console.log("Schedule open");
+    this.activePage = page;
+    console.log(this.activePage);
+      this.nav.setRoot(MySchedulePage, {
+        resolveDate: resolveDate
+    });
+    
+  }
+
   checkActive(page) {
     return page == this.activePage;
   }
