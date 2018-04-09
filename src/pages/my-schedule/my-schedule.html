@@ -26,7 +26,8 @@
             <ion-item *ngIf="selectedDate.events.length == 0"><div class="no-events-label">No Events</div></ion-item>
             <ion-item (click)="onEventSelected(event)" *ngFor="let event of selectedDate.events">
 
-                <h2>Start Time: {{event.startTime | date: 'shortTime'}} End Time: {{event.endTime | date: 'shortTime'}}</h2>
+                <h2>Start Time: {{event.startTime | date: 'shortTime'}}</h2>
+                <h2>End Time: {{event.endTime | date: 'shortTime'}}</h2>
                 <h3>Pick Up: {{event.pickUp}} </h3>
                 <h3>Destination: {{event.destination}}</h3>
             </ion-item>

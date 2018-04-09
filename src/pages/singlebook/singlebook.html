@@ -160,13 +160,13 @@
             </ion-item> -->
             <ion-row>
                 <!-- first button  -->
-                <ion-col *ngIf=" !cancel && !isCancelled" col-6>
+                <ion-col *ngIf=" !cancel && !isCancelled" col-5>
 
                     <button ion-button class="but" style="margin-top:10px" text-center (click)="ViewInfo(item)">Riders Info</button>
 
                 </ion-col>
                 <!-- second button  -->
-                <ion-col col-6>
+                <ion-col col-5>
                     <button *ngIf="hasOverlap == true" ion-button class="but" style="margin-top:10px" text-center (click)="ReviewSchedule()">Resolve Conflicts</button>
                     <button *ngIf="button && hasOverlap == false" style="margin-top:10px" ion-button class="but" text-center [disabled]="!isenabled" (click)="Accept()"> Accept</button>
                 </ion-col>
@@ -175,12 +175,12 @@
                 <button ion-button class="but" style="margin-top:10px" text-center (click)="ViewInfo(item)">Riders Info</button>
             </ion-row>
             <ion-row *ngIf=" cancel">
-                <ion-col col-6>
+                <ion-col col-5>
 
                     <button ion-button class="but" text-center (click)="Trip()"> Start Trip</button>
 
                 </ion-col>
-                <ion-col col-6>
+                <ion-col col-5>
                     <button ion-button class="but" text-center [disabled]="!isenabled || !myForm.valid" (click)="Cancel()"> Cancel</button>
                 </ion-col>
             </ion-row>
