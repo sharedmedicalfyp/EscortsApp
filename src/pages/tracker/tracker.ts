@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, Platform, LoadingController } from 'ionic-angular';
 import * as firebase from 'firebase';
 import { Geolocation } from '@ionic-native/geolocation';
 import { Device } from '@ionic-native/device';
@@ -10,14 +10,15 @@ import { Observable } from 'rxjs/Observable';
 import { HistoryPage } from '../history/history';
 import { Events } from 'ionic-angular';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { DataSnapshot } from '@firebase/database';
 @Component({
   selector: 'page-tracker',
   templateUrl: 'tracker.html',
 })
 export class TrackerPage {
 
-  @ViewChild('map') mapElement: ElementRef;
-  map: any;
+  mapElement;
+  map: any = null;
   items: Observable<any[]>;
   email;
   Address;
@@ -27,7 +28,9 @@ export class TrackerPage {
   visible: boolean = true;
   value: boolean = false;
   markers = [];
-  ref = firebase.database().ref('geolocations/');
+  currentlocationmarker; 
+  currentselectedoptionmarker;
+  ref = firebase.database().ref('Bookings');
   itemsRef: AngularFireList<any>;
   public itemRef: firebase.database.Reference;
 
@@ -35,87 +38,127 @@ export class TrackerPage {
   constructor(public navCtrl: NavController, private nativeGeocoder: NativeGeocoder,
     public platform: Platform, public alertCtrl: AlertController,
     private geolocation: Geolocation, afDatabase: AngularFireDatabase, public events: Events,
-    private device: Device) {
+    private device: Device, private loading: LoadingController) {
 
 
     this.platform.ready().then(() => {
-      this.initMap();
     });
 
     this.itemsRef = afDatabase.list('Bookings',
       ref => ref.orderByChild('startTime')
     );
     this.email = window.sessionStorage.getItem('Email');
+
+    //method to check if there is an ongoing booking event
     this.items = this.itemsRef.snapshotChanges().map(changes => {
 
       return changes.map(c =>
         ({ key: c.payload.key, ...c.payload.val() })).filter(items =>
           items.Driver === this.email && items.Status === 'Ongoing');
     });
+    //if there are ongoing events
     this.items.subscribe(x => {
       this.array = x;
       console.log(this.array);
       if (this.array.length > 0) {
         this.visible = true;
-        this.value = false;
+        this.value = false; //toggles the display of map, False = ongoing trips found
         console.log(this.visible);
       }
+      //if there are no ongoing booking events
       else {
         this.visible = false;
-        this.value = true;
+        this.value = true; //toggles the display of map, True = No ongoing trips found
         console.log(this.visible);
       }
     }
     );
 
-
-    this.ref.on('value', resp => {
-      this.deleteMarkers();
-      snapshotToArray(resp).forEach(data => {
-        if (data.uuid !== this.device.uuid) {
-          let image = 'assets/imgs/black.png';
-          let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
-          this.nativeGeocoder.reverseGeocode(data.latitude, data.longitude)
-            .then((result: NativeGeocoderReverseResult) => (JSON.stringify(result.postalCode))
-
-
-
-
-            )
-            .catch((error: any) => console.log(error));
-          this.addMarker(updatelocation, image);
-          this.setMapOnAll(this.map);
-        } else {
-          let image = 'assets/imgs/blue.png';
-          let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
-          this.addMarker(updatelocation, image);
-          this.setMapOnAll(this.map);
-        }
-      });
-    });
   }
 ionViewDidLoad(){ 
-
-  
-   google.maps.event.trigger( this.map, 'resize' );
+  let loader = this.loading.create({
+    content: "Logging in..."
+  });
+  loader.present();
+  this.mapElement = document.getElementById("map");
+  this.mapElement.visible = true;
+  setTimeout(()=>{   
+    this.initMap();
+  },1000);
+  loader.dismiss();
 
 
 }
+ionViewWillLeave(){ 
+  this.mapElement.visible = false;
+  this.mapElement = null;
+}
+//shows destination marker on the map 
+showDestinationMarker(){
+  console.log("destination method fired");
+    this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) =>{
+      var obj = snap.val(); 
+      if(obj.Driver == this.email){ 
+          console.log(obj); //gets the ongoing record that we can use later for latlng mapping
+          let markerCoord = new google.maps.LatLng(obj.Destinationlat, obj.Destinationlng);
+          this.currentselectedoptionmarker.setPosition(markerCoord);
+          // this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
+          // //this.deleteMarkers();
+          // this.currentselectedoptionmarker.setMap(this.map);
+          // this.currentlocationmarker.setMap(this.map);
 
-  initMap() {
-    console.log("hi");
-    this.geolocation.getCurrentPosition().then((resp) => {
-      let mylocation = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      this.map = new google.maps.Map(this.mapElement.nativeElement, {
-        zoom: 15,
-        center: mylocation
-      });
+      }
     });
-    let watch = this.geolocation.watchPosition();
+    console.log(this.currentselectedoptionmarker); //marker is global variable
+}
+//shows pickup marker on the map
+showPickupMarker(){ 
+  console.log("pickupmarker method fired");
+    this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) =>{
+      var obj = snap.val(); 
+      if(obj.Driver == this.email){ 
+          console.log(obj); //gets the ongoing record that we can use later for latlng mapping
+          let markerCoord = new google.maps.LatLng(obj.Pickuplat, obj.Pickuplng);
+          this.currentselectedoptionmarker.setPosition(markerCoord);
+          // this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
+          // //this.deleteMarkers();
+          // this.currentselectedoptionmarker.setMap(this.map);
+          // this.currentlocationmarker.setMap(this.map);
+      }
+    });
+}
+
+
+ initMap() {
+  
+    this.geolocation.getCurrentPosition().then((resp) => {
+      //sets current location from GPS
+      let mylocation = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude); //current user's location based on GPS coords picked up by geolocation api
+      this.map = new google.maps.Map(this.mapElement, {
+        zoom: 15, //sets map zoom level
+        center: mylocation //centers map to current user's location
+      });
+      this.setCurrentLocationMarker(mylocation, 'assets/imgs/blue.png');
+      this.currentlocationmarker.setMap(this.map);
+      //initializes and sets currentselectedoptionmarker
+   this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
+    var obj = snap.val();
+    if (obj.Driver == this.email) {
+      console.log(obj); //gets the ongoing record that we can use later for latlng mapping
+      let markerCoord = new google.maps.LatLng(obj.Pickuplat, obj.Pickuplng);
+      this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
+      this.currentselectedoptionmarker.setMap(this.map);
+    }
+  });
+    });
+
+    let watch = this.geolocation.watchPosition(); //called automatically whenever the device changes position, information taken from documentation
+    //subscribe to watch data
     watch.subscribe((data) => {
-      this.deleteMarkers();
+      //clear all markers 
+      //this.deleteMarkers();
       console.log(data);
-      this.updateGeolocation(this.device.uuid, data.coords.latitude, data.coords.longitude);
+      //get current device geocode location -> then method 
       this.nativeGeocoder.reverseGeocode(data.coords.latitude, data.coords.longitude)
         .then((result: NativeGeocoderReverseResult) => {
 
@@ -123,12 +166,14 @@ ionViewDidLoad(){
           this.itemsRef.snapshotChanges().map(changes => {
             return changes.map(c =>
               ({ key: c.payload.key, ...c.payload.val() })).filter(items =>
-                items.Driver === this.email && items.Status === 'Ongoing');
+                items.Driver === this.email && items.Status === 'Ongoing'); //checks for the record where the trip is ongoing and the driver is equals to the current user's email
           }).subscribe(time => {
             var schedules = [];
 
             schedules = time;
             console.log(schedules);
+            
+            //for loop to keep checking whether the user has reached the destination, could be done in another way like how Uber does it. 
             for (var i = 0; i < schedules.length; i++) {
               this.key = schedules[i].key;
               this.itemRef = firebase.database().ref('Bookings/' + this.key);
@@ -164,7 +209,6 @@ ionViewDidLoad(){
                   alert.present();
                   localStorage.setItem('alerted', 'yes');
                 }
-
               }
             }
           });
@@ -173,53 +217,41 @@ ionViewDidLoad(){
 
         .catch((error: any) => console.log(error));
       let updatelocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
-      let image = 'assets/imgs/blue.png';
-      this.addMarker(updatelocation, image);
-      this.setMapOnAll(this.map);
+      this.currentlocationmarker.setPosition(updatelocation);
+      // let image = 'assets/imgs/blue.png';
+      // this.setCurrentLocationMarker(updatelocation, image); //updates user location on the map
+      // this.currentlocationmarker.setMap(this.map);
+      // if(this.currentselectedoptionmarker){
+      //   this.currentselectedoptionmarker.setMap(this.map);
+      // }
     });
   }
 
-  addMarker(location, image) {
-    let marker = new google.maps.Marker({
-      position: location,
-      map: this.map,
-      icon: image
+  setCurrentLocationMarker(location, image){ 
+    this.currentlocationmarker = new google.maps.Marker({ 
+      position: location, 
+      //map: this.map, 
+      icon: image 
     });
-    this.markers.push(marker);
+  }
+  setCurrentSelectedOptionMarker(location, image){ 
+    this.currentselectedoptionmarker = new google.maps.Marker({ 
+      position: location, 
+      //map: this.map, 
+      icon: image 
+    });
   }
 
-  setMapOnAll(map) {
-    for (var i = 0; i < this.markers.length; i++) {
-      this.markers[i].setMap(map);
-    }
-  }
 
-  clearMarkers() {
-    this.setMapOnAll(null);
-  }
 
-  deleteMarkers() {
-    this.clearMarkers();
-    this.markers = [];
-  }
-
-  updateGeolocation(uuid, lat, lng) {
-    if (localStorage.getItem('mykey')) {
-      firebase.database().ref('geolocations/' + localStorage.getItem('mykey')).set({
-        uuid: uuid,
-        latitude: lat,
-        longitude: lng
-      });
-    } else {
-      let newData = this.ref.push();
-      newData.set({
-        uuid: uuid,
-        latitude: lat,
-        longitude: lng
-      });
-      localStorage.setItem('mykey', newData.key);
-    }
-  }
+  // deleteMarkers() {
+  //   if(this.currentlocationmarker){
+  //   this.currentlocationmarker.setMap(null);
+  //   }
+  //   if(this.currentselectedoptionmarker){
+  //   this.currentselectedoptionmarker.setMap(null);
+  //   }
+  // }
 
 }
 
@@ -234,3 +266,8 @@ export const snapshotToArray = snapshot => {
 
   return returnArr;
 };
+
+
+
+
+
