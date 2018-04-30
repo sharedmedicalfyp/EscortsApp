@@ -86,7 +86,7 @@ export class MyApp {
   });
     platform.ready().then(() => {
 
-      statusBar.styleDefault();
+      //statusBar.styleDefault();
       splashScreen.hide();
       console.log(this.currentUser);
       // this.afAuth.authState.subscribe(auth => {
@@ -129,6 +129,7 @@ export class MyApp {
     if (page.component) {
       this.nav.setRoot(page.component);
       this.activePage = page;
+      this.nav.popToRoot();
     }
     else {
 

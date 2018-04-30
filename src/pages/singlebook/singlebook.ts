@@ -24,6 +24,7 @@ export class SinglebookPage {
   isenabled: boolean = true;
   visible: boolean = false;
   hasOverlap: boolean = false;
+  onTrip: boolean = false; 
   status;
   email;
   keys;
@@ -101,11 +102,13 @@ export class SinglebookPage {
 
       this.itemRefs = firebase.database().ref('Bookings/' + this.key);
     });
-
-    console.log(this.assist);
-
-
-    return false;
+    this.itemRef.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
+      var obj = snap.val();
+      if (obj.Driver == this.email) {
+        console.log("Currently on trip");
+        this.onTrip = true;
+      }
+    });
 
 
 

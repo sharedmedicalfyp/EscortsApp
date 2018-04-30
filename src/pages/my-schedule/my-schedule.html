@@ -24,7 +24,7 @@
     <template #template let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
         <ion-list class="event-detail-container" overflow-scroll="false" has-bouncing="false">
             <ion-item *ngIf="selectedDate.events.length == 0"><div class="no-events-label">No Events</div></ion-item>
-            <ion-item (click)="onEventSelected(event)" *ngFor="let event of selectedDate.events">
+            <ion-item (click)="onEventSelected(event)" *ngFor="let event of selectedDate.events" text-wrap>
 
                 <h2>Start Time: {{event.startTime | date: 'shortTime'}}</h2>
                 <h2>End Time: {{event.endTime | date: 'shortTime'}}</h2>

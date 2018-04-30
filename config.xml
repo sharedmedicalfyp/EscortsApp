@@ -107,6 +107,7 @@
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-device" spec="^1.1.7" />
     <plugin name="cordova-sms-plugin" spec="git+https://github.com/cordova-sms/cordova-sms-plugin.git" />
+    <plugin name="cordova.plugins.diagnostic" spec="^4.0.5" />
     <engine name="browser" spec="~5.0.2" />
     <engine name="android" spec="~7.0.0" />
 </widget>

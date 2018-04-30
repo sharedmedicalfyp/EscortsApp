@@ -11,15 +11,37 @@
     </button>
         <ion-title style="text-align: center;">Tracking</ion-title>
     </ion-navbar>
-    <ion-toolbar>
-        <button ion-button (click)="showPickupMarker()">Pickup</button>
-        <button ion-button (click)="showDestinationMarker()">Destination</button>
+    <ion-toolbar [hidden]="!visible" no-border>
+        <button [hidden]="!selectedOption" ion-button (click)="showDestinationMarker()">Switch to Destination Location</button>
+        <button [hidden]="selectedOption" ion-button (click)="showPickupMarker()">Switch Pickup Location</button>
+
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
     <div [hidden]="!visible" #map id="map"></div>
-    <!--<div  #map id="map" ></div>-->
-    <div *ngIf="value">You must start a trip first!</div>
 </ion-content>
+
+<ion-footer>
+    <ion-toolbar [hidden]="!visible" no-border>
+        <h4 [hidden]="!selectedOption">Showing Pickup Location</h4>
+        <h4 [hidden]="selectedOption">Showing Destination Location</h4>
+        <ion-list *ngFor="let information of informationArray">
+            <ion-item>
+                <ion-label [hidden]="!selectedOption">{{information.Pickup}}</ion-label>
+                <ion-label [hidden]="selectedOption">{{information.Destination}}</ion-label>
+            </ion-item>
+            <ion-item-sliding>
+                <ion-item color="danger">Swipe left to End Trip</ion-item>
+                <ion-item-options (ionSwipe)="endTrip()" side="right">
+                    <button ion-button color="danger" expandable (click)="endTrip()">End Trip</button>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
+        <!-- <ion-list>
+            
+        </ion-list> -->
+        <!-- <button ion-button style="width:100%" (click)="endTrip()">End Trip</button> -->
+    </ion-toolbar>
+</ion-footer>

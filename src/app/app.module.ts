@@ -41,7 +41,7 @@ import { MonthViewComponent } from 'ionic2-calendar/monthview';
 import { WeekViewComponent } from 'ionic2-calendar/weekview';
 import { DayViewComponent } from 'ionic2-calendar/dayview';
 import { Crop } from '@ionic-native/crop';
-
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { CropPage } from '../pages/crop/crop';
 import { Events } from 'ionic-angular';
@@ -145,6 +145,7 @@ export const firebaseConfig = {
     SplashScreen,
     File,
     NativeStorage,
+    Diagnostic,
     Transfer,
     Camera,
     Crop,

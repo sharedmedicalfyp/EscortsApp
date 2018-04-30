@@ -11,90 +11,180 @@ import { HistoryPage } from '../history/history';
 import { Events } from 'ionic-angular';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { DataSnapshot } from '@firebase/database';
+import { SchedulePage } from '../schedule/schedule';
+import { MySchedulePage } from '../my-schedule/my-schedule';
+import { Diagnostic } from '@ionic-native/diagnostic';
 @Component({
   selector: 'page-tracker',
   templateUrl: 'tracker.html',
 })
 export class TrackerPage {
-
+  watch;
   mapElement;
   map: any = null;
-  items: Observable<any[]>;
   email;
-  Address;
-  postal;
   key;
-  array = [];
   visible: boolean = true;
-  value: boolean = false;
-  markers = [];
   currentlocationmarker; 
   currentselectedoptionmarker;
   ref = firebase.database().ref('Bookings');
-  itemsRef: AngularFireList<any>;
   public itemRef: firebase.database.Reference;
-
-  dest;
+  selectedOption: boolean = true;
+  informationArray = [];
   constructor(public navCtrl: NavController, private nativeGeocoder: NativeGeocoder,
     public platform: Platform, public alertCtrl: AlertController,
-    private geolocation: Geolocation, afDatabase: AngularFireDatabase, public events: Events,
-    private device: Device, private loading: LoadingController) {
+    private geolocation: Geolocation, private afDatabase: AngularFireDatabase, public events: Events,
+    private device: Device, private loading: LoadingController, private diagnostic: Diagnostic) {}
 
+  ionViewDidLeave() {
+    if(this.watch){
+    this.watch.unsubscribe();
+    }
+  }
+  ionViewDidLoad() {
+    console.log("ionviewdidload called");
+    let successCallback = (isAvailable) => {
+      if (isAvailable) {
+        this.email = window.sessionStorage.getItem('Email');
 
-    this.platform.ready().then(() => {
-    });
+        //method to check if there is an ongoing booking event
+        this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
+          var obj = snap.val();
+          if (obj.Driver == this.email) {
+            this.informationArray.push(obj);
+            this.key = snap.key;
+          }
+        });
+        //if there are ongoing events
+        if (this.key) {
+          this.visible = true;
+          this.mapElement = document.getElementById("map");
+          this.mapElement.visible = true;
+          this.initMap();
+        }
+        //if there are no ongoing booking events
+        else {
+          this.visible = false;
+          let alert = this.alertCtrl.create({
+            title: 'You must start a trip first',
+            buttons: [
+              {
+                text: 'OK',
+                handler: data => {
+                  this.events.publish('Schedule');
+                  this.navCtrl.push(MySchedulePage);
+                  this.navCtrl.setRoot(MySchedulePage).then(() => {
+                    this.navCtrl.popToRoot();
 
-    this.itemsRef = afDatabase.list('Bookings',
-      ref => ref.orderByChild('startTime')
-    );
+                  });
+                }
+              }
+            ],
+
+          });
+          alert.present();
+
+    }
+    }else{ 
+      this.visible = false;
+      let alert = this.alertCtrl.create({
+        title: 'Please enable GPS and try again',
+        buttons: [
+          {
+            text: 'OK',
+            handler: data => {
+              this.events.publish('Schedule');
+              this.navCtrl.push(MySchedulePage);
+              this.navCtrl.setRoot(MySchedulePage).then(() => {
+                this.navCtrl.popToRoot();
+  
+              });
+            }
+          }
+        ],
+  
+      });
+      alert.present(); 
+    }     
+    }; 
+  let errorCallback = (e) => {
+    console.log("Warning:This browser does not support cordova");
     this.email = window.sessionStorage.getItem('Email');
 
-    //method to check if there is an ongoing booking event
-    this.items = this.itemsRef.snapshotChanges().map(changes => {
+        //method to check if there is an ongoing booking event
+        this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
+          var obj = snap.val();
+          if (obj.Driver == this.email) {
+            this.informationArray.push(obj);
+            this.key = snap.key;
+          }
+        });
+        //if there are ongoing events
+        if (this.key) {
+          this.visible = true;
+          this.mapElement = document.getElementById("map");
+          this.mapElement.visible = true;
+          this.initMap();
+        }
+        //if there are no ongoing booking events
+        else {
+          this.visible = false;
+          let alert = this.alertCtrl.create({
+            title: 'You must start a trip first',
+            buttons: [
+              {
+                text: 'OK',
+                handler: data => {
+                  this.events.publish('Schedule');
+                  this.navCtrl.push(MySchedulePage);
+                  this.navCtrl.setRoot(MySchedulePage).then(() => {
+                    this.navCtrl.popToRoot();
 
-      return changes.map(c =>
-        ({ key: c.payload.key, ...c.payload.val() })).filter(items =>
-          items.Driver === this.email && items.Status === 'Ongoing');
-    });
-    //if there are ongoing events
-    this.items.subscribe(x => {
-      this.array = x;
-      console.log(this.array);
-      if (this.array.length > 0) {
-        this.visible = true;
-        this.value = false; //toggles the display of map, False = ongoing trips found
-        console.log(this.visible);
-      }
-      //if there are no ongoing booking events
-      else {
-        this.visible = false;
-        this.value = true; //toggles the display of map, True = No ongoing trips found
-        console.log(this.visible);
-      }
-    }
-    );
+                  });
+                }
+              }
+            ],
 
+          });
+          alert.present();
+
+    } 
+  };
+
+  this.diagnostic.isLocationEnabled().then(successCallback).catch(errorCallback);
+    
+    
   }
-ionViewDidLoad(){ 
-  let loader = this.loading.create({
-    content: "Logging in..."
-  });
-  loader.present();
-  this.mapElement = document.getElementById("map");
-  this.mapElement.visible = true;
-  setTimeout(()=>{   
-    this.initMap();
-  },1000);
-  loader.dismiss();
+  endTrip() {
+    this.itemRef = firebase.database().ref('Bookings/' + this.key);
+    let alert = this.alertCtrl.create({
+      title: 'Trip Completed!',
+      buttons: [
+        {
+          text: 'OK',
+          handler: data => {
+            this.itemRef.update({
+              Status: "Completed",
+              CompletedAt: firebase.database.ServerValue.TIMESTAMP,
+            });
+            localStorage.setItem('History', 'completed');
+            this.events.publish('History');
+            this.navCtrl.push(HistoryPage);
+            this.navCtrl.setRoot(HistoryPage).then(() => {
+              this.navCtrl.popToRoot();
 
+            });
+          }
+        }
+      ],
 
-}
-ionViewWillLeave(){ 
-  this.mapElement.visible = false;
-  this.mapElement = null;
+    });
+    alert.present();
+  
 }
 //shows destination marker on the map 
 showDestinationMarker(){
+  this.selectedOption = false;
   console.log("destination method fired");
     this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) =>{
       var obj = snap.val(); 
@@ -102,17 +192,13 @@ showDestinationMarker(){
           console.log(obj); //gets the ongoing record that we can use later for latlng mapping
           let markerCoord = new google.maps.LatLng(obj.Destinationlat, obj.Destinationlng);
           this.currentselectedoptionmarker.setPosition(markerCoord);
-          // this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
-          // //this.deleteMarkers();
-          // this.currentselectedoptionmarker.setMap(this.map);
-          // this.currentlocationmarker.setMap(this.map);
-
       }
     });
     console.log(this.currentselectedoptionmarker); //marker is global variable
 }
 //shows pickup marker on the map
 showPickupMarker(){ 
+  this.selectedOption = true;
   console.log("pickupmarker method fired");
     this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) =>{
       var obj = snap.val(); 
@@ -120,25 +206,29 @@ showPickupMarker(){
           console.log(obj); //gets the ongoing record that we can use later for latlng mapping
           let markerCoord = new google.maps.LatLng(obj.Pickuplat, obj.Pickuplng);
           this.currentselectedoptionmarker.setPosition(markerCoord);
-          // this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
-          // //this.deleteMarkers();
-          // this.currentselectedoptionmarker.setMap(this.map);
-          // this.currentlocationmarker.setMap(this.map);
       }
     });
 }
 
-
  initMap() {
-  
+   console.log("initmap fired");
+    this.selectedOption = true;
+    let loader = this.loading.create({
+      content: "Loading"
+    });
+    loader.present();
     this.geolocation.getCurrentPosition().then((resp) => {
       //sets current location from GPS
       let mylocation = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude); //current user's location based on GPS coords picked up by geolocation api
       this.map = new google.maps.Map(this.mapElement, {
-        zoom: 15, //sets map zoom level
-        center: mylocation //centers map to current user's location
+        zoom: 12, //sets map zoom level
+        center: mylocation,//centers map to current user's location
+        disableDefaultUI: true
       });
-      this.setCurrentLocationMarker(mylocation, 'assets/imgs/blue.png');
+      loader.dismiss();
+      console.log("map loaded");
+      google.maps.event.trigger(this.map, 'resize');
+      this.setCurrentLocationMarker(mylocation, 'assets/imgs/car.png');
       this.currentlocationmarker.setMap(this.map);
       //initializes and sets currentselectedoptionmarker
    this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
@@ -146,113 +236,95 @@ showPickupMarker(){
     if (obj.Driver == this.email) {
       console.log(obj); //gets the ongoing record that we can use later for latlng mapping
       let markerCoord = new google.maps.LatLng(obj.Pickuplat, obj.Pickuplng);
-      this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/black.png');
+      this.setCurrentSelectedOptionMarker(markerCoord, 'assets/imgs/client.png');
       this.currentselectedoptionmarker.setMap(this.map);
     }
   });
     });
-
-    let watch = this.geolocation.watchPosition(); //called automatically whenever the device changes position, information taken from documentation
-    //subscribe to watch data
-    watch.subscribe((data) => {
-      //clear all markers 
-      //this.deleteMarkers();
+    var options = {
+      enableHighAccuracy: true,
+      frequency: 1,
+    };
+    this.watch = this.geolocation.watchPosition(options).subscribe((data) => {
       console.log(data);
       //get current device geocode location -> then method 
-      this.nativeGeocoder.reverseGeocode(data.coords.latitude, data.coords.longitude)
-        .then((result: NativeGeocoderReverseResult) => {
+      // this.nativeGeocoder.reverseGeocode(data.coords.latitude, data.coords.longitude)
+      //   .then((result: NativeGeocoderReverseResult) => {
 
-          this.dest = result.postalCode;
-          this.itemsRef.snapshotChanges().map(changes => {
-            return changes.map(c =>
-              ({ key: c.payload.key, ...c.payload.val() })).filter(items =>
-                items.Driver === this.email && items.Status === 'Ongoing'); //checks for the record where the trip is ongoing and the driver is equals to the current user's email
-          }).subscribe(time => {
-            var schedules = [];
+      //     this.dest = result.postalCode;
+      //     this.itemsRef.snapshotChanges().map(changes => {
+      //       return changes.map(c =>
+      //         ({ key: c.payload.key, ...c.payload.val() })).filter(items =>
+      //           items.Driver === this.email && items.Status === 'Ongoing'); //checks for the record where the trip is ongoing and the driver is equals to the current user's email
+      //     }).subscribe(time => {
+      //       var schedules = [];
 
-            schedules = time;
-            console.log(schedules);
+      //       schedules = time;
+      //       console.log(schedules);
             
-            //for loop to keep checking whether the user has reached the destination, could be done in another way like how Uber does it. 
-            for (var i = 0; i < schedules.length; i++) {
-              this.key = schedules[i].key;
-              this.itemRef = firebase.database().ref('Bookings/' + this.key);
-              this.Address = schedules[i].Destination;
-              this.postal = this.Address.substr(this.Address.length - 6);
-              console.log(this.dest);
-              console.log(this.postal);
-              if (this.dest === this.postal) {
-                var alerted = localStorage.getItem('alerted') || '';
-                if (alerted != 'yes') {
-                  let alert = this.alertCtrl.create({
-                    title: 'Destination Reached!',
-                    buttons: [
-                      {
-                        text: 'OK',
-                        handler: data => {
-                          this.itemRef.update({
-                            Status: "Completed",
-                            CompletedAt: firebase.database.ServerValue.TIMESTAMP,
-                          });
-                          localStorage.setItem('History', 'completed');
-                          this.events.publish('History');
-                          this.navCtrl.push(HistoryPage);
-                          this.navCtrl.setRoot(HistoryPage).then(() => {
-                            this.navCtrl.popToRoot();
+      //       //for loop to keep checking whether the user has reached the destination, could be done in another way like how Uber does it. 
+      //       for (var i = 0; i < schedules.length; i++) {
+      //         this.key = schedules[i].key;
+      //         this.itemRef = firebase.database().ref('Bookings/' + this.key);
+      //         this.Address = schedules[i].Destination;
+      //         this.postal = this.Address.substr(this.Address.length - 6);
+      //         console.log(this.dest);
+      //         console.log(this.postal);
+      //         if (this.dest === this.postal) {
+      //           var alerted = localStorage.getItem('alerted') || '';
+      //           if (alerted != 'yes') {
+      //             let alert = this.alertCtrl.create({
+      //               title: 'Destination Reached!',
+      //               buttons: [
+      //                 {
+      //                   text: 'OK',
+      //                   handler: data => {
+      //                     this.itemRef.update({
+      //                       Status: "Completed",
+      //                       CompletedAt: firebase.database.ServerValue.TIMESTAMP,
+      //                     });
+      //                     localStorage.setItem('History', 'completed');
+      //                     this.events.publish('History');
+      //                     this.navCtrl.push(HistoryPage);
+      //                     this.navCtrl.setRoot(HistoryPage).then(() => {
+      //                       this.navCtrl.popToRoot();
 
-                          });
-                        }
-                      }
-                    ],
+      //                     });
+      //                   }
+      //                 }
+      //               ],
 
-                  });
-                  alert.present();
-                  localStorage.setItem('alerted', 'yes');
-                }
-              }
-            }
-          });
+      //             });
+      //             alert.present();
+      //             localStorage.setItem('alerted', 'yes');
+      //           }
+      //         }
+      //       }
+      //     });
 
-        })
-
-        .catch((error: any) => console.log(error));
+      //   }).catch((error: any) => console.log(error));
+      console.log(data.coords.latitude);
+      if(data.coords.latitude && data.coords.longitude){
       let updatelocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
       this.currentlocationmarker.setPosition(updatelocation);
-      // let image = 'assets/imgs/blue.png';
-      // this.setCurrentLocationMarker(updatelocation, image); //updates user location on the map
-      // this.currentlocationmarker.setMap(this.map);
-      // if(this.currentselectedoptionmarker){
-      //   this.currentselectedoptionmarker.setMap(this.map);
-      // }
+      }
+    },error => {
+      console.log(error);
     });
   }
 
   setCurrentLocationMarker(location, image){ 
     this.currentlocationmarker = new google.maps.Marker({ 
       position: location, 
-      //map: this.map, 
       icon: image 
     });
   }
   setCurrentSelectedOptionMarker(location, image){ 
     this.currentselectedoptionmarker = new google.maps.Marker({ 
       position: location, 
-      //map: this.map, 
       icon: image 
     });
   }
-
-
-
-  // deleteMarkers() {
-  //   if(this.currentlocationmarker){
-  //   this.currentlocationmarker.setMap(null);
-  //   }
-  //   if(this.currentselectedoptionmarker){
-  //   this.currentselectedoptionmarker.setMap(null);
-  //   }
-  // }
-
 }
 
 export const snapshotToArray = snapshot => {
