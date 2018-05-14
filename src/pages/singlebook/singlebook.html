@@ -36,11 +36,11 @@
                 </div>
                 <div class="section">
                     <h2><strong>Start Time:</strong></h2>
-                    <h2>{{item.startTime}}</h2>
+                    <h2>{{item.startTime | date: 'shortTime'}}</h2>
                 </div>
                 <div class="section">
                     <h2><strong>End Time:</strong></h2>
-                    <h2>{{item.endTime}}</h2>
+                    <h2>{{item.endTime | date: 'shortTime'}}</h2>
                 </div>
                 <div class="section">
                     <h2><strong>Pick up location:</strong></h2>
@@ -68,6 +68,7 @@
                         </li>
                     </ul>
                 </div>
+
                 <div *ngIf="item.CompletedAt" class="section">
                     <h2><strong>Completed at:</strong></h2>
                     <h2>{{item.CompletedAt | date : 'dd/MM/yyyy h.mma'}}</h2>
@@ -81,81 +82,46 @@
                     <h2>{{ item.CancelledAt | date : 'dd/MM/yyyy h.mma' }}</h2>
                 </div>
             </ion-item>
+
+            <ion-item *ngIf="item.PatientName && Ongoing">
+                <ion-label stacked style="color:black">
+                    <h2>{{item.PatientName}}'s Status:</h2>
+                </ion-label>
+                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.PatientStatus">
+                    <ion-option>On Trip</ion-option>
+                    <ion-option>Queuing for queue no.</ion-option>
+                    <ion-option>Waiting for Appointment</ion-option>
+                    <ion-option>In checkup</ion-option>
+                </ion-select>
+            </ion-item>
+            <ion-item *ngIf="item.Patient2Name && Ongoing">
+                <ion-label stacked style="color:black">
+                    <h2>{{item.Patient2Name}}'s Status:</h2>
+                </ion-label>
+                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient2Status">
+                    <ion-option>On Trip</ion-option>
+                    <ion-option>Queuing for queue no.</ion-option>
+                    <ion-option>Waiting for Appointment</ion-option>
+                    <ion-option>In checkup</ion-option>
+                </ion-select>
+            </ion-item>
+            <ion-item *ngIf="item.Patient3Name && Ongoing">
+                <ion-label stacked style="color:black">
+                    <h2>{{item.Patient3Name}}'s Status:</h2>
+                </ion-label>
+                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient3Status">
+                    <ion-option>On Trip</ion-option>
+                    <ion-option>Queuing for queue no.</ion-option>
+                    <ion-option>Waiting for Appointment</ion-option>
+                    <ion-option>In checkup</ion-option>
+                </ion-select>
+            </ion-item>
+
             <ion-item *ngIf="visible">
                 <h2><strong>>Reason of Cancellation</strong></h2>
                 <ion-input formControlName="Rod" type="text" placeholder="Reason of Cancellation "></ion-input>
             </ion-item>
 
-            <!-- <ion-item>
-                <p style="color:#488aff">Carpool: </p>
-                <p style="display:inline; color:black">{{item.Carpool}}</p>
-            </ion-item> -->
-            <!-- <ion-item>
-                <p style="color:#488aff">Assistance: </p>
-                <p style="display:inline; color:black">{{item.Assistance}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Client's Email: </p>
-                <p style="display:inline; color:black">{{item.Email}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Contact: </p>
-                <p style="display:inline; color:black">{{item.Contact}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.SecondaryContact">
-                <p style="color:#488aff">Secondary Contact: </p>
-                <p style="display:inline; color:black">{{item.SecondaryContact}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Date: </p>
-                <p style="display:inline; color:black">{{item.Date}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Start Time: </p>
-                <p style="display:inline; color:black">{{item.startTime}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">End Time: </p>
-                <p style="display:inline; color:black">{{item.endTime}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Pick up Location: </p>
-                <p style="display:inline; color:black">{{item.Pickup}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Destination Location: </p>
-                <p style="display:inline; color:black">{{item.Destination}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Requester: </p>
-                <p style="display:inline; color:black">{{item.ClientName}}</p>
-            </ion-item>
-            <ion-item>
-                <p style="color:#488aff">Riders: </p>
-                <p style="display:inline; color:black">{{item.PatientName}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.Patient2Name">
-                <p style="display:inline; color:black">{{item.Patient2Name}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.Patient3Name">
-                <p style="display:inline; color:black">{{item.Patient3Name}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.CompletedAt">
-                <p style="color:#488aff">Completed At: </p>
-                <p style="display:inline; color:black">{{item.CompletedAt | date : 'dd/MM/yyyy h.mma'}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.ROD">
-                <p style="color:#488aff">Reason Of Decline: </p>
-                <p style="display:inline; color:black">{{item.ROD}}</p>
-            </ion-item>
-            <ion-item *ngIf="item.CancelledAt">
-                <p style="color:#488aff">Cancelled At: </p>
-                <p style="display:inline; color:black">{{ item.CancelledAt | date : 'dd/MM/yyyy h.mma' }}</p>
-            </ion-item>
-            <ion-item *ngIf="visible">
-                <ion-label color="primary" stacked>Reasons Of Decline :</ion-label>
-                <ion-input formControlName="Rod" type="text" placeholder="Reasons Of Decline "></ion-input>
-            </ion-item> -->
             <ion-row>
                 <!-- first button  -->
                 <ion-col *ngIf=" !cancel && !isCancelled" col-6>
@@ -165,6 +131,7 @@
                 </ion-col>
                 <!-- second button  -->
                 <ion-col col-6>
+                    <button *ngIf="Ongoing" ion-button class="but" style="margin-top:10px" text-center (click)="UpdateStatus(item)">Update Status</button>
                     <button *ngIf="hasOverlap == true" ion-button class="but" style="margin-top:10px" text-center (click)="ReviewSchedule()">Resolve Conflicts</button>
                     <button *ngIf="button && hasOverlap == false" style="margin-top:10px" ion-button class="but" text-center [disabled]="!isenabled" (click)="Accept()"> Accept</button>
                 </ion-col>

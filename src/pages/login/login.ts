@@ -40,10 +40,8 @@ export class LoginPage {
 
 
   }
-
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
-    
 
   }
   public type = 'password';
@@ -117,6 +115,7 @@ export class LoginPage {
                   let alert = this.alertCtrl.create({
                     title: 'Ongoing Trip Found',
                     message: 'Do you want to resume your trip?',
+                    enableBackdropDismiss: false,
                     buttons: [
                       {
                         text: 'Cancel',

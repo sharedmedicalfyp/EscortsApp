@@ -14,6 +14,7 @@ import { DataSnapshot } from '@firebase/database';
 import { SchedulePage } from '../schedule/schedule';
 import { MySchedulePage } from '../my-schedule/my-schedule';
 import { Diagnostic } from '@ionic-native/diagnostic';
+import { SinglebookPage } from '../singlebook/singlebook';
 @Component({
   selector: 'page-tracker',
   templateUrl: 'tracker.html',
@@ -84,74 +85,106 @@ export class TrackerPage {
           });
           alert.present();
 
-    }
-    }else{ 
-      this.visible = false;
-      let alert = this.alertCtrl.create({
-        title: 'Please enable GPS and try again',
-        buttons: [
-          {
-            text: 'OK',
-            handler: data => {
-              this.events.publish('Schedule');
-              this.navCtrl.push(MySchedulePage);
-              this.navCtrl.setRoot(MySchedulePage).then(() => {
-                this.navCtrl.popToRoot();
-  
-              });
-            }
-          }
-        ],
-  
-      });
-      alert.present(); 
-    }     
-    }; 
-  let errorCallback = (e) => {
-    console.log("Warning:This browser does not support cordova");
-    this.email = window.sessionStorage.getItem('Email');
-
-        //method to check if there is an ongoing booking event
-        this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
-          var obj = snap.val();
-          if (obj.Driver == this.email) {
-            this.informationArray.push(obj);
-            this.key = snap.key;
-          }
-        });
-        //if there are ongoing events
-        if (this.key) {
-          this.visible = true;
-          this.mapElement = document.getElementById("map");
-          this.mapElement.visible = true;
-          this.initMap();
         }
-        //if there are no ongoing booking events
-        else {
-          this.visible = false;
-          let alert = this.alertCtrl.create({
-            title: 'You must start a trip first',
-            buttons: [
-              {
-                text: 'OK',
-                handler: data => {
-                  this.events.publish('Schedule');
-                  this.navCtrl.push(MySchedulePage);
-                  this.navCtrl.setRoot(MySchedulePage).then(() => {
-                    this.navCtrl.popToRoot();
+      } else {
+        this.visible = false;
+        let alert = this.alertCtrl.create({
+          title: 'Please enable GPS and try again',
+          buttons: [
+            {
+              text: 'OK',
+              handler: data => {
+                this.events.publish('Schedule');
+                this.navCtrl.push(MySchedulePage);
+                this.navCtrl.setRoot(MySchedulePage).then(() => {
+                  this.navCtrl.popToRoot();
 
-                  });
-                }
+                });
               }
-            ],
+            }
+          ],
 
-          });
-          alert.present();
+        });
+        alert.present();
+      }
+    };
+    let errorCallback = (e) => {
+      console.log("Warning:This browser does not support cordova");
+      this.email = window.sessionStorage.getItem('Email');
 
-    } 
-  };
+      //method to check if there is an ongoing booking event
+      this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
+        var obj = snap.val();
+        if (obj.Driver == this.email) {
+          this.informationArray.push(obj);
+          this.key = snap.key;
+        }
+      });
+      //if there are ongoing events
+      if (this.key) {
+        this.visible = true;
+        this.mapElement = document.getElementById("map");
+        this.mapElement.visible = true;
+        this.initMap();
+      }
+      //if there are no ongoing booking events
+      else {
+        this.visible = false;
+        let alert = this.alertCtrl.create({
+          title: 'Information',
+          message: 'You must start a trip first',
+          enableBackdropDismiss: false,
+          buttons: [
+            {
+              text: 'OK',
+              handler: data => {
+                this.events.publish('Schedule');
+                this.navCtrl.push(MySchedulePage);
+                this.navCtrl.setRoot(MySchedulePage).then(() => {
+                  this.navCtrl.popToRoot();
 
-  this.diagnostic.isLocationEnabled().then(successCallback).catch(errorCallback);
+                });
+              }
+            }
+          ],
+
+        });
+        alert.present();
+
+      }
+    };
+    //checking for permissions
+    this.diagnostic.isLocationAuthorized().then((isAuthorized) => {
+      if (isAuthorized) {
+        this.diagnostic.isLocationEnabled().then(successCallback).catch(errorCallback);
+      } else {
+        this.visible = false;
+        let alert = this.alertCtrl.create({
+          title: 'App Permissions',
+          message: 'Please enable the GPS permission for this application',
+          enableBackdropDismiss: false,
+          buttons: [
+            {
+              text: 'OK',
+              handler: data => {
+                this.diagnostic.requestRuntimePermissions([this.diagnostic.permission.ACCESS_COARSE_LOCATION, this.diagnostic.permission.ACCESS_FINE_LOCATION]);
+                this.events.publish('Schedule');
+                this.navCtrl.push(MySchedulePage);
+                this.navCtrl.setRoot(MySchedulePage).then(() => {
+                  this.navCtrl.popToRoot();
+
+
+                });
+              }
+            }
+          ],
+
+        });
+        alert.present();
+
+      }
+    }).catch(errorCallback);
+
     
     
   }
@@ -312,7 +345,12 @@ showPickupMarker(){
       console.log(error);
     });
   }
-
+bookinginfo(){
+  this.navCtrl.push(SinglebookPage, {
+    key: this.key,
+    Status: 'Ongoing'
+  });
+}
   setCurrentLocationMarker(location, image){ 
     this.currentlocationmarker = new google.maps.Marker({ 
       position: location, 
@@ -338,6 +376,7 @@ export const snapshotToArray = snapshot => {
 
   return returnArr;
 };
+
 
 
 

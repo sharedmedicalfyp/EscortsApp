@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PickerColumnOption } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PickerColumnOption, ToastController } from 'ionic-angular';
 import firebase from 'firebase';
 import { SchedulePage } from '../schedule/schedule';
 import { BookingPage } from '../booking/booking';
@@ -13,6 +13,7 @@ import { HistoryPage } from '../history/history';
 import { Events } from 'ionic-angular';
 import { RidersInfoPage } from '../riders-info/riders-info';
 import { MyApp } from '../../app/app.component';
+import { Calendar } from '@ionic-native/calendar';
 @IonicPage()
 @Component({
   selector: 'page-singlebook',
@@ -21,10 +22,14 @@ import { MyApp } from '../../app/app.component';
 export class SinglebookPage {
   public key;
   public name;
+  patientstatus:string;
+  patient2status:string; 
+  patient3status:string;
   isenabled: boolean = true;
   visible: boolean = false;
   hasOverlap: boolean = false;
   onTrip: boolean = false; 
+  Ongoing:boolean = false;
   status;
   email;
   keys;
@@ -40,6 +45,10 @@ export class SinglebookPage {
   carpool;
   EndTime;
   patient2;
+  pickupLocation; 
+  destinationLocation;
+  patient2exists:boolean = false;
+  patient3exists:boolean = false;
   isCancelled: boolean = false;
   cancelledAt;
   completedAt;
@@ -48,7 +57,7 @@ export class SinglebookPage {
   button: boolean;
   ComApp: MyApp;
   public DSEARef: firebase.database.Reference;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, afDatabase: AngularFireDatabase, public formBuilder: FormBuilder, public alertCtrl: AlertController, public eventsCtrl:Events) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, afDatabase: AngularFireDatabase, public formBuilder: FormBuilder, public alertCtrl: AlertController, public eventsCtrl:Events, public toastCtrl: ToastController, private calendar:Calendar) {
     this.itemsRef = afDatabase.list('EscortBookings');
 
     this.myForm = formBuilder.group({
@@ -85,6 +94,9 @@ export class SinglebookPage {
     if(this.status === 'Cancelled'){
       this.isCancelled = true;
     }
+    if(this.status === 'Ongoing'){ 
+      this.Ongoing = true; 
+    }
 
     this.itemRef.child(this.key).once('value', (itemkeySnapshot) => {
       this.startTime = itemkeySnapshot.val().startTime;
@@ -94,9 +106,14 @@ export class SinglebookPage {
       this.destinationregion = itemkeySnapshot.val().DestinationRegion;
       this.carpool = itemkeySnapshot.val().Carpool;
       this.assist = itemkeySnapshot.val().Assistance;
-      if (itemkeySnapshot.hasChild("Patient2Name")) {
-        this.patient2 = itemkeySnapshot.val().Patient2Name
-      }
+      this.pickupLocation = itemkeySnapshot.val().Pickup;
+      this.destinationLocation = itemkeySnapshot.val().Destination
+      // if (itemkeySnapshot.hasChild("Patient2Name")) {
+      //   this.patient2exists = true;
+      // }
+      // if (itemkeySnapshot.hasChild("Patient3Name")){
+      //   this.patient3exists = true; 
+      // }
 
       this.items.push(itemkeySnapshot.val());
 
@@ -113,6 +130,28 @@ export class SinglebookPage {
 
 
   }
+  UpdateStatus(item:any){
+    console.log(item.Patient2Status);
+    this.itemRefs.update({
+      PatientStatus: item.PatientStatus
+    });
+    if(item.Patient2Name){
+      this.itemRefs.update({
+        Patient2Status: item.Patient2Status
+      });
+    }
+    if(item.Patient3Name){
+      this.itemRefs.update({
+        Patient3Status: item.Patient3Status
+      });
+    }
+    this.toastCtrl.create({
+      message: "Status Updated",
+      position: "middle",
+      duration: 1000
+    }).present()
+  }
+
   getRoundedTime(inDate) {
     var d = new Date();
     if (inDate) {
@@ -144,10 +183,13 @@ export class SinglebookPage {
     
   }
   Accept() {
+    let eventStartTime = new Date(this.date + " " + this.startTime);
+    let eventEndTime = new Date(this.date + " " + this.endTime);
     this.startTime = this.getRoundedTime(new Date(this.date + " " + this.startTime));
     this.endTime = this.getRoundedTime(new Date(this.date + " " + this.endTime));
     var EDSEPD = this.email + "," + this.date + "," + this.startTime + "," + this.endTime + "," + this.pickupregion + "," + this.destinationregion;
     console.log(this.date);
+    
     try {
       this.isenabled = false;
       this.itemRefs.update({
@@ -231,8 +273,20 @@ export class SinglebookPage {
         }
 
         let alert = this.alertCtrl.create({
-          title: 'You have accepted the booking!',
-          buttons: ['OK']
+          title: 'Booking Accepted!',
+          message: 'Booking accepted, do you want to add this to your phone calendar?',
+          enableBackdropDismiss: false,
+
+          buttons: [{
+            text: 'Yes',
+            handler: data => {
+              this.calendar.createEventInteractively("Escort Trip", null, "Pick Up Location: " + this.pickupLocation + " Destination Location: " + this.destinationLocation, eventStartTime, eventEndTime);
+            }
+          },
+          {
+            text: 'No',
+            handler: data =>{alert.dismiss()}
+          }]
         });
         alert.present();
         this.events.publish('Schedule');
@@ -252,6 +306,9 @@ export class SinglebookPage {
   Trip() {
     this.itemRefs.update({
       Status: "Ongoing",
+      PatientStatus: "On Trip",
+      Patient2Status: "On Trip",
+      Patient3Status: "On Trip"
     });
     this.events.publish('Track');
     this.navCtrl.setRoot(TrackerPage)
@@ -260,6 +317,7 @@ export class SinglebookPage {
 
       });
   }
+    
   Cancel() {
     this.startTime = this.getRoundedTime(new Date(this.date + " " + this.startTime));
     this.endTime = this.getRoundedTime(new Date(this.date + " " + this.endTime));

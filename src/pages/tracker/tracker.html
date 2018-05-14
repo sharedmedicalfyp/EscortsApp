@@ -10,10 +10,15 @@
       <ion-icon name="menu"></ion-icon>
     </button>
         <ion-title style="text-align: center;">Tracking</ion-title>
+        <ion-buttons end>
+            <button ion-button (click)="bookinginfo()">Booking Info</button>
+        </ion-buttons>
     </ion-navbar>
-    <ion-toolbar [hidden]="!visible" no-border>
-        <button [hidden]="!selectedOption" ion-button (click)="showDestinationMarker()">Switch to Destination Location</button>
-        <button [hidden]="selectedOption" ion-button (click)="showPickupMarker()">Switch Pickup Location</button>
+    <ion-toolbar color="danger" [hidden]="!visible" no-border>
+        <ion-buttons>
+            <button [hidden]="!selectedOption" ion-button (click)="showDestinationMarker()">Switch to Destination Location</button>
+            <button [hidden]="selectedOption" ion-button (click)="showPickupMarker()">Switch to Pickup Location</button>
+        </ion-buttons>
 
     </ion-toolbar>
 </ion-header>
