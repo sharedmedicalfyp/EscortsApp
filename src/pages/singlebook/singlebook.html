@@ -36,11 +36,11 @@
                 </div>
                 <div class="section">
                     <h2><strong>Start Time:</strong></h2>
-                    <h2>{{item.startTime | date: 'shortTime'}}</h2>
+                    <h2>{{ setTime(item.startTime) | date: 'shortTime'}}</h2>
                 </div>
                 <div class="section">
                     <h2><strong>End Time:</strong></h2>
-                    <h2>{{item.endTime | date: 'shortTime'}}</h2>
+                    <h2>{{ setTime(item.endTime) | date: 'shortTime'}}</h2>
                 </div>
                 <div class="section">
                     <h2><strong>Pick up location:</strong></h2>
@@ -87,7 +87,7 @@
                 <ion-label stacked style="color:black">
                     <h2>{{item.PatientName}}'s Status:</h2>
                 </ion-label>
-                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.PatientStatus">
+                <ion-select interface="action-sheet" style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.PatientStatus">
                     <ion-option>On Trip</ion-option>
                     <ion-option>Queuing for queue no.</ion-option>
                     <ion-option>Waiting for Appointment</ion-option>
@@ -98,7 +98,7 @@
                 <ion-label stacked style="color:black">
                     <h2>{{item.Patient2Name}}'s Status:</h2>
                 </ion-label>
-                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient2Status">
+                <ion-select interface="action-sheet" style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient2Status">
                     <ion-option>On Trip</ion-option>
                     <ion-option>Queuing for queue no.</ion-option>
                     <ion-option>Waiting for Appointment</ion-option>
@@ -109,7 +109,7 @@
                 <ion-label stacked style="color:black">
                     <h2>{{item.Patient3Name}}'s Status:</h2>
                 </ion-label>
-                <ion-select style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient3Status">
+                <ion-select interface="action-sheet" style="max-width: 100%" [ngModelOptions]="{standalone: true}" [(ngModel)]="item.Patient3Status">
                     <ion-option>On Trip</ion-option>
                     <ion-option>Queuing for queue no.</ion-option>
                     <ion-option>Waiting for Appointment</ion-option>

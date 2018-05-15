@@ -130,6 +130,9 @@ export class SinglebookPage {
 
 
   }
+  setTime(time) {
+    return (new Date(this.date + " " +time));
+  }
   UpdateStatus(item:any){
     console.log(item.Patient2Status);
     this.itemRefs.update({
