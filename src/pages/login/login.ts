@@ -81,16 +81,16 @@ export class LoginPage {
       content: "Logging in..."
     });
     loader.present();
-    this.afAuth.auth.signInWithEmailAndPassword(this.email.toLowerCase(), this.password).then((result)=>{
+    this.afAuth.auth.signInWithEmailAndPassword(this.email.trim().toLowerCase(), this.password).then((result)=>{
       let user =  this.afAuth.auth.currentUser;
       if(result){
         if(user.emailVerified){
-          this.itemRef.orderByChild("Email").equalTo(this.email.toLowerCase()).once('value', (snap) => {
+          this.itemRef.orderByChild("Email").equalTo(this.email.trim().toLowerCase()).once('value', (snap) => {
             this.hasSnapshot = snap.exists();
             //is confirmed escort
               if(this.hasSnapshot){
                   //account exists, set all window storage variables
-                  window.sessionStorage.setItem('Email', this.email.toLowerCase());
+                  window.sessionStorage.setItem('Email', this.email.trim().toLowerCase());
                   snap.forEach(itemSnap => {
                     window.sessionStorage.setItem('Name', itemSnap.child("Name").val());
                     window.sessionStorage.setItem('Gender', itemSnap.child("Gender").val());
@@ -103,7 +103,7 @@ export class LoginPage {
                   //method to check if there is an ongoing booking event
                  this.ref.orderByChild("Status").equalTo("Ongoing").on('child_added', (snap) => {
                   var obj = snap.val();
-                  if (obj.Driver == this.email.toLocaleLowerCase()) {
+                  if (obj.Driver == this.email.trim().toLowerCase()) {
                     //has Ongoing Trip 
                     //this.hasOngoingTrip = true;
                     console.log("Has ongoing trip recorded");
