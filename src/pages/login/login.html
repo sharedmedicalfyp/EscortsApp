@@ -17,7 +17,7 @@
         </ion-item>
         <ion-item class="row">
             <ion-label color="primary" stacked>Email: </ion-label>
-            <ion-input type="email" [(ngModel)]="email" placeholder="Email" text-wrap></ion-input>
+            <ion-input id= "mail" type="email" [(ngModel)]="email" placeholder="Email" text-wrap></ion-input>
         </ion-item>
         <ion-item class="ro">
             <ion-label color="primary" stacked>Password:</ion-label>
@@ -28,7 +28,7 @@
         <!-- <ion-item class="fp" text-wrap no-lines> -->
         <button ion-button class="but" style="margin-top:5px" text-center (click)="Reset()">Forgot Password</button>
         <!-- </ion-item> -->
-        <button ion-button class="but" style="margin-top:5px" text-center (click)="Login()" [disabled]="!email || !password">Login</button>
+        <button ion-button class="but" style="margin-top:5px" text-center (click)="Login()" [disabled]="!email || !password" id="loginn">Login</button>
 
 
 

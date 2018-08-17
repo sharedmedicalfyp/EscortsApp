@@ -2,7 +2,7 @@
 
     <ion-navbar color="danger" enable-menu-with-back-views="false">
 
-        <button persistent="true" ion-button class="damn" menuToggle>
+        <button persistent="true" id="ProfileID" ion-button class="damn" menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
         <ion-title style="text-align: center;">Profile</ion-title>
@@ -136,7 +136,7 @@
   </form>
 -->
 
-    <button ion-button [disabled]=" mismatchedPasswords || !myForm.valid" class="react" (click)="UpdatePassword()">Update My Password
+    <button ion-button [disabled]=" mismatchedPasswords || !myForm.valid" class="react" (click)="UpdatePassword()" id="UpdatePass">Update My Password
 </button>
 
 </ion-content>
