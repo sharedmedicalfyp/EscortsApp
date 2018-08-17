@@ -93,6 +93,10 @@
     "@types/googlemaps": "^3.30.3",
     "jasmine": "^3.1.0",
     "jasmine-core": "^3.1.0",
+<<<<<<< HEAD
+=======
+    "jasmine-ts-console-reporter": "^3.1.1",
+>>>>>>> 9941438641d77019720eed620e6eeba762428295
     "karma": "^2.0.5",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
